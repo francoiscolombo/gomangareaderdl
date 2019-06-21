@@ -11,14 +11,12 @@ import (
 )
 
 const (
-	versionNumber  = "0.1"
-	versionName    = "white ghost"
-	commandHelp    = "help"
-	commandVersion = "version"
-	commandFetch   = "fetch"
-	commandList    = "list"
-	commandConfig  = "config"
-	commandUpdate  = "update"
+	versionNumber = "0.2"
+	versionName   = "atomic thunderbolt"
+	commandFetch  = "fetch"
+	commandList   = "list"
+	commandConfig = "config"
+	commandUpdate = "update"
 )
 
 type parameters struct {
@@ -37,34 +35,32 @@ func usage() {
 	fmt.Println(`gomangareaderdl: CLI for manga mass download
 
 Usage
- $ gomangareaderdl --command fetch --manga <manga>
+ $ gomangareaderdl -command fetch -manga <manga>
 
 Commands list
  fetch     Fetch manga to download
  config    Set defaults
  update    Update subscribed manga
  list      List downloaded manga
- version   Show version
- help      This help message
 
 Options, Sub-commands
  fetch
-  --manga       Set manga to download
-  --chapter     Set start chapter to download
-  --provider    Set download site (if not set, the default provider is used)
-  --path        If used, allow to download manga to another path instead of the default one
-  --force       Overwrite history
-  --silent      Don't display download progress bar
+  -manga       Set manga to download
+  -chapter     Set start chapter to download
+  -provider    Set download site (if not set, the default provider is used)
+  -path        If used, allow to download manga to another path instead of the default one
+  -force       Overwrite history
+  -silent      Don't display download progress bar
  config
-  --output      Set default output path
-  --provider    Set default provider
+  -output      Set default output path
+  -provider    Set default provider
  update
-  --manga       Set manga to update (must have been loaded once before)
-  --provider    Override download site
-  --next        Set next chapter to download (rewrite history)
+  -manga       Set manga to update (must have been loaded once before)
+  -provider    Override download site
+  -next        Set next chapter to download (rewrite history)
 
 Example
- $ gomangareaderdl --command fetch --provider mangareader.net --manga shingeki-no-kyojin --chapter 100 --path .
+ $ gomangareaderdl -command fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
  => Download shingeki-no-kyojin chapter 100 and forward into cwd
 
 For the full documentation please refer to:
@@ -76,10 +72,15 @@ func main() {
 
 	green := color.FgGreen.Render
 	fmt.Printf("\n%s on ", green("Welcome"))
-	color.S256(15, 20).Print("gom")
-	color.S256(4, 231).Print("ang")
-	color.S256(15, 124).Print("adl")
-	fmt.Printf("\n--------------------\n\n")
+	color.S256(15, 20).Print("goman")
+	color.S256(4, 231).Print("garea")
+	color.S256(15, 124).Print("derdl")
+	fmt.Printf("\n--------------------------\n\n")
+
+	fmt.Print("version ")
+	color.C256(69).Print(versionNumber)
+	fmt.Print(" ")
+	color.S256(241, 231).Printf("(%s)\n\n", versionName)
 
 	if settings.IsSettingsExisting() == false {
 		settings.WriteDefaultSettings()
@@ -93,7 +94,7 @@ func main() {
 
 	var params parameters
 
-	flag.StringVar(&params.Command, "command", commandHelp, "command to execute")
+	flag.StringVar(&params.Command, "command", "???", "command to execute")
 	flag.StringVar(&params.Manga, "manga", "???", "manga to download or update")
 	flag.IntVar(&params.Chapter, "chapter", -1, "chapter to download")
 	flag.IntVar(&params.Next, "next", -1, "overwrite next chapter to download")
@@ -107,13 +108,6 @@ func main() {
 
 	// depending the command, right?
 	switch params.Command {
-	case commandHelp:
-		usage()
-	case commandVersion:
-		fmt.Print("version ")
-		color.C256(69).Print(versionNumber)
-		fmt.Print(" ")
-		color.S256(241, 231).Printf("(%s)\n", versionName)
 	case commandList:
 		// list command
 		commands.ProcessListCommand(&settings)

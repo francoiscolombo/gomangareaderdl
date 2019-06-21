@@ -36,34 +36,32 @@ This should produce an executable in your ``${GOPATH}/bin`` directory.
     gomangareaderdl: CLI for manga mass download
     
     Usage
-     $ gomangareaderdl --command fetch --manga <manga>
+     $ gomangareaderdl -command fetch -manga <manga>
     
     Commands list
      fetch     Fetch manga to download
      config    Set defaults
      update    Update subscribed manga
      list      List downloaded manga
-     version   Show version
-     help      This help message
     
     Options, Sub-commands
      fetch
-      --manga       Set manga to download
-      --chapter     Set start chapter to download
-      --provider    Set download site (if not set, the default provider is used)
-      --path        If used, allow to download manga to another path instead of the default one
-      --force       Overwrite history
-      --silent      Don't display download progress bar
+      -manga       Set manga to download
+      -chapter     Set start chapter to download
+      -provider    Set download site (if not set, the default provider is used)
+      -path        If used, allow to download manga to another path instead of the default one
+      -force       Overwrite history
+      -silent      Don't display download progress bar
      config
-      --output      Set default output path
-      --provider    Set default provider
+      -output      Set default output path
+      -provider    Set default provider
      update
-      --manga       Set manga to update (must have been loaded once before)
-      --provider    Override download site
-      --next        Set next chapter to download (rewrite history)
+      -manga       Set manga to update (must have been loaded once before)
+      -provider    Override download site
+      -next        Set next chapter to download (rewrite history)
     
     Example
-     $ gomangareaderdl --command fetch --provider mangareader.net --manga shingeki-no-kyojin --chapter 100 --path .
+     $ gomangareaderdl -command fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
      => Download shingeki-no-kyojin chapter 100 and forward into cwd
     
     For the full documentation please refer to:
@@ -77,7 +75,7 @@ If you don't give some optional parameters, the defaults will be used, so it's a
 
 In order to do that, simply use the command ``config`` like this:
 
-    $ gomangareaderdl --command config --output /data/mangas --provider mangareader.net
+    $ gomangareaderdl -command config -output /data/mangas -provider mangareader.net
 
 by issuing this command, you set the *default path* to **/data/mangas** and the *default provider* to **mangareader.net**
 
@@ -85,19 +83,19 @@ by issuing this command, you set the *default path* to **/data/mangas** and the 
 
 After all it's the main goal of this tool, isn't it?
 
-    $ gomangareaderdl --command fetch --manga shingeki-no-kyojin
+    $ gomangareaderdl -command fetch -manga shingeki-no-kyojin
 
 This command will start to download the manga *shingeki-no-kyojin* from the chapter 1, and generate cbz for every chapters in the default path **/data/mangas/shingeki-no-kyojin**.
 
 But you can also use a command like this one:
 
-    $ gomangareaderdl --command fetch --provider mangapanda.com --manga shingeki-no-kyojin --chapter 100 --path .
+    $ gomangareaderdl -command fetch -provider mangapanda.com -manga shingeki-no-kyojin -chapter 100 -path .
 
 Here you override the default provider and use *mangapanda.com* instead, you start to download from the *chapter 100* and you store your cbz in the directory *./shingeki-no-kyojin*
 
 After downloading the last available chapter, the cli stop. And he keeps in his history the laster downloaded chapter. Which means that the next time you launch this command:
 
-    $ gomangareaderdl --command fetch --manga shingeki-no-kyojin
+    $ gomangareaderdl -command fetch -manga shingeki-no-kyojin
 
 it will restart from the last downloaded chapter. Nice, no?
 
@@ -105,25 +103,28 @@ it will restart from the last downloaded chapter. Nice, no?
 
 Once you download a few mangas, you can check your history whith this simple command:
 
-    $ gomangareaderdl --command list
+    $ go run gomangareaderdl.go -command list
     
-    Welcome on gomangadl
-    --------------------
+    Welcome on gomangareaderdl
+    --------------------------
     
-    Loading settings from /home/francois/.gomangareader.json...
+    version 0.2 (atomic thunderbolt)
+    
+    Loading settings from C:\Users\Francois/.gomangareader.json...
     Successfully Opened settings.json
     - Settings loaded.
-      > Default output path is /data/mangas
+      > Default output path is D:\Documents\mangas
       > Default provider is mangareader.net
     
     - List command selected
-    +--------------------+--------------+-----------------+
-    |        NAME        | LAST CHAPTER |    PROVIDER     |
-    +--------------------+--------------+-----------------+
-    | shingeki-no-kyojin |          118 | mangapanda.com  |
-    | onepunch-man       |          159 | mangareader.net |
-    | btooom             |           99 | mangareader.net |
-    +--------------------+--------------+-----------------+
+    +------------------------+--------------+-----------------+
+    |          NAME          | LAST CHAPTER |    PROVIDER     |
+    +------------------------+--------------+-----------------+
+    | onepunch-man           |          159 | mangareader.net |
+    | shingeki-no-kyojin     |          119 | mangareader.net |
+    | btooom                 |          102 | mangareader.net |
+    | the-promised-neverland | 139          | mangareader.net |
+    +------------------------+--------------+-----------------+
 
 If a new chapter is available, the manga will be display with another color. So you can easily see what are the new mangas you need to download!
 
@@ -133,7 +134,7 @@ But maybe your last downloaded chapter was corrupted and you want to download it
 
 No problems. Just use a command like this:
 
-    $ gomangareaderdl --command update --manga btooom --provider mangapanda.com --next 98
+    $ gomangareaderdl -command update -manga btooom -provider mangapanda.com -next 98
 
 And then your history will change, and you can now download your manga again.
 

@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/francoiscolombo/gomangareaderdl/createcbz"
@@ -145,10 +146,16 @@ func downloadChapter(path, provider, title string, chapter int, displayProgressB
 		fmt.Printf("%s pages ...\n", cstep("download"))
 		bar := progressbar.NewOptions(count)
 		bar.RenderBlank()
+		var wg sync.WaitGroup
+		wg.Add(len(imgURL))
 		for p, img := range imgURL {
-			downloadImage(path, p, searchImage(provider, title, img))
-			bar.Add(1)
+			go func(page int, urlImg string) {
+				downloadImage(path, page, searchImage(provider, title, urlImg))
+				bar.Add(1)
+				wg.Done()
+			}(p, img)
 		}
+		wg.Wait()
 	} else {
 		for p, img := range imgURL {
 			downloadImage(path, p, searchImage(provider, title, img))
