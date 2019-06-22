@@ -138,6 +138,16 @@ No problems. Just use a command like this:
 
 And then your history will change, and you can now download your manga again.
 
+### Read a chapter of a previously downloaded manga
+
+Once you donwload your manga, you can use a cbz reader like [http://comicsplusplus.com](ComicsPlusPlus) to read it.
+
+But maybe you don't want to download additional software? Well, good news for you because with the following command:
+
+    $ go run gomangareaderdl.go -command view -manga the-promised-neverland -chapter 11
+
+you can open a very simple GUI that allow you to read the chapter of your favorite manga.
+
 ## Supported sites
 
 Currently supported sites:

@@ -6,6 +6,7 @@ import (
 
 	"github.com/francoiscolombo/gomangareaderdl/fetch"
 	"github.com/francoiscolombo/gomangareaderdl/settings"
+	"github.com/francoiscolombo/gomangareaderdl/viewer"
 
 	"gopkg.in/gookit/color.v1"
 )
@@ -113,4 +114,31 @@ func ProcessUpdateCommand(cfg *settings.Settings, manga, provider string, nextCh
 		fmt.Printf("  > Set next chapter to download to %s\n", cprm(fmt.Sprintf("%d", nextChapter)))
 	}
 	*cfg = settings.UpdateHistory(*cfg, manga, nextChapter, provider)
+}
+
+/*
+ProcessViewCommand allows to view a previously downloaded manga given chapter
+*/
+func ProcessViewCommand(cfg *settings.Settings, manga string, chapter int, path string) {
+	if manga == "???" {
+		color.Error.Prompt("parameter --manga is mandatory...")
+		os.Exit(1)
+	}
+	if chapter < 0 {
+		chapter = settings.SearchLastChapter((*cfg), manga)
+	}
+	if path == "???" {
+		path = cfg.Config.OutputPath
+	}
+	ccmd := color.FgLightBlue.Render
+	cprm := color.FgLightCyan.Render
+	cwarn := color.FgLightYellow.Render
+	fmt.Printf("- %s command selected, with the following parameters:\n", ccmd("View"))
+	fmt.Printf("  > Manga title to view : '%s'\n", cprm(manga))
+	fmt.Printf("  > Read chapter %s\n", cprm(fmt.Sprintf("%d", chapter)))
+	fmt.Printf("  > From path '%s'\n", cprm(path))
+	err := viewer.Read(manga, chapter, path)
+	if err != nil {
+		color.Error.Tips(fmt.Sprintf("Error when trying to open manga %s chapter %s for reading: %s", cwarn(manga), cwarn(fmt.Sprintf("%d", chapter)), err))
+	}
 }

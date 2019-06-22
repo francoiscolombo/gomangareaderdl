@@ -11,12 +11,13 @@ import (
 )
 
 const (
-	versionNumber = "0.2"
-	versionName   = "atomic thunderbolt"
+	versionNumber = "0.3"
+	versionName   = "crimson needle"
 	commandFetch  = "fetch"
 	commandList   = "list"
 	commandConfig = "config"
 	commandUpdate = "update"
+	commandView   = "view"
 )
 
 type parameters struct {
@@ -42,6 +43,7 @@ Commands list
  config    Set defaults
  update    Update subscribed manga
  list      List downloaded manga
+ view      Launch a graphical viewer, allowing you to watch a previously downloaded manga
 
 Options, Sub-commands
  fetch
@@ -58,6 +60,10 @@ Options, Sub-commands
   -manga       Set manga to update (must have been loaded once before)
   -provider    Override download site
   -next        Set next chapter to download (rewrite history)
+ view
+  -manga       Set manga to view
+  -chapter     Set chapter to read
+  -path        If used, allow to read manga from another path instead of the default one
 
 Example
  $ gomangareaderdl -command fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
@@ -80,7 +86,7 @@ func main() {
 	fmt.Print("version ")
 	color.C256(69).Print(versionNumber)
 	fmt.Print(" ")
-	color.S256(241, 231).Printf("(%s)\n\n", versionName)
+	color.S256(124, 231).Printf("(%s)\n\n", versionName)
 
 	if settings.IsSettingsExisting() == false {
 		settings.WriteDefaultSettings()
@@ -120,6 +126,9 @@ func main() {
 	case commandUpdate:
 		// update command allows the following parameters: manga, provider and next
 		commands.ProcessUpdateCommand(&settings, params.Manga, params.Provider, params.Next)
+	case commandView:
+		// fetch command allows the following parameters: manga, chapter and path
+		commands.ProcessViewCommand(&settings, params.Manga, params.Chapter, params.Path)
 	default:
 		color.Print("<red>Sorry my friend</>, but you didn't give me the good parameters, so I'm not able to help you!\n")
 		color.Print("<cyan>Maybe a little help can be what you really need?</> Okay, this should be usefull then...\n\n")
