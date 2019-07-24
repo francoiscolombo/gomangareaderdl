@@ -157,3 +157,13 @@ Currently supported sites:
 | mangareader.net |	fast | fastest with mangapanda.com |
 | mangapanda.com | fast | mangareader rehost |
 | mangalife.us | not so fast | wide variety, best formatting for manhwa |
+
+## How to build?
+
+Simply use the following command:
+
+    $ goreleaser release --skip-publish
+
+then you will have a `dist` directory containing the binaries.
+
+please note that you need to have [https://goreleaser.com/](goreleaser) installed in order to do that. :)

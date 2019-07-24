@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	versionNumber = "0.3"
-	versionName   = "crimson needle"
+	versionNumber = "0.4"
+	versionName   = "nebula storm"
 	commandFetch  = "fetch"
 	commandList   = "list"
 	commandConfig = "config"
