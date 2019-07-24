@@ -9,7 +9,6 @@ import (
 
 	"github.com/francoiscolombo/gomangareaderdl/fetch"
 	"github.com/olekukonko/tablewriter"
-	"gopkg.in/gookit/color.v1"
 )
 
 // Settings is the structure that allowed to store the default configuration and the download history for all the mangas we are downloading
@@ -39,7 +38,7 @@ type Manga struct {
 func getSettingsPath() string {
 	user, err := user.Current()
 	if err != nil {
-		color.Error.Prompt("Error when trying to get current user: %s", err)
+		fmt.Printf("Error when trying to get current user: %s\n", err)
 		os.Exit(1)
 	}
 	return user.HomeDir + "/.gomangareader.json"
@@ -61,11 +60,10 @@ WriteDefaultSettings write the default settings
 func WriteDefaultSettings() {
 	user, err := user.Current()
 	if err != nil {
-		color.Error.Prompt("Error when trying to get current user: %s", err)
+		fmt.Printf("Error when trying to get current user: %s\n", err)
 		os.Exit(1)
 	}
-	cprm := color.FgLightCyan.Render
-	fmt.Printf("Hello %s ! You don't have any settings yet. I can see that your homedir is %s, I will use it if you don't mind.\n", cprm(user.Name), cprm(user.HomeDir))
+	fmt.Printf("Hello %s ! You don't have any settings yet. I can see that your homedir is %s, I will use it if you don't mind.\n", user.Name, user.HomeDir)
 	settings := Settings{
 		Config{
 			OutputPath: fmt.Sprintf("%s/mangas", user.HomeDir),
@@ -84,18 +82,16 @@ ReadSettings read the settings file
 */
 func ReadSettings() (settings Settings) {
 
-	cc := color.C256(48)
-
 	// Open our jsonFile
 	settingsPath := getSettingsPath()
-	fmt.Printf("Loading settings from %s...\n", cc.Sprint(settingsPath))
+	fmt.Printf("Loading settings from %s...\n", settingsPath)
 	jsonFile, err := os.Open(settingsPath)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		color.Error.Prompt("Error when trying to open settings file: %s", err)
+		fmt.Printf("Error when trying to open settings file: %s\n", err)
 	}
 
-	fmt.Printf("Successfully Opened %s\n", cc.Sprint("settings.json"))
+	fmt.Println("Successfully Opened settings.json")
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 
@@ -136,7 +132,6 @@ DisplayHistory simply load the settings and display the titles, providers, downl
 dowloaded chapter, and highlight mangas that have available new chapters
 */
 func DisplayHistory(cfg *Settings) {
-	cnew := color.S256(0, 3)
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Name", "Last chapter", "Provider"})
 	for _, title := range (*cfg).History.Titles {
@@ -144,9 +139,9 @@ func DisplayHistory(cfg *Settings) {
 		mangaTitle := title.Title
 		provider := title.Provider
 		if fetch.NextChapter(title.Provider, title.Title, title.Chapter) == true {
-			chapter = cnew.Sprintf("%d", title.Chapter)
-			mangaTitle = cnew.Sprintf("%s", mangaTitle)
-			provider = cnew.Sprintf("%s", provider)
+			chapter = fmt.Sprintf("<%d>", title.Chapter)
+			mangaTitle = fmt.Sprintf("> %s", mangaTitle)
+			provider = fmt.Sprintf("[%s]", provider)
 		}
 		table.Append([]string{
 			mangaTitle,
@@ -192,6 +187,6 @@ func UpdateHistory(cfg Settings, manga string, chapter int, provider string) (ne
 		},
 	}
 	WriteSettings(newSettings)
-	color.Info.Tips("History updated.")
+	fmt.Println("History updated.")
 	return
 }

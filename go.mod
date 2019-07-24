@@ -7,5 +7,5 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/olekukonko/tablewriter v0.0.1
-	github.com/schollz/progressbar v1.0.0
+	github.com/schollz/progressbar/v2 v2.13.2
 )

@@ -13,18 +13,15 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/francoiscolombo/gomangareaderdl/createcbz"
-	"github.com/schollz/progressbar"
-	"gopkg.in/gookit/color.v1"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/schollz/progressbar/v2"
 )
 
 func createCBZ(outputPath, pagesPath, title string, chapter int) {
-	cstep := color.FgYellow.Render
-	cprm := color.FgLightMagenta.Render
-	cdone := color.FgLightGreen.Render
 	// List of Files to Zip
-	fmt.Printf("\n%s %s ... ", cstep("create"), cprm(fmt.Sprintf("%s-%03d.cbz", title, chapter)))
+	fmt.Printf("\ncreate %s ... ", fmt.Sprintf("%s-%03d.cbz", title, chapter))
 	var files []string
 	outputCBZ := fmt.Sprintf("%s/%s-%03d.cbz", outputPath, title, chapter)
 	err := filepath.Walk(pagesPath, func(path string, info os.FileInfo, err error) error {
@@ -48,7 +45,7 @@ func createCBZ(outputPath, pagesPath, title string, chapter int) {
 		os.Remove(file)
 	}
 	os.Remove(pagesPath)
-	fmt.Printf("%s\n", cdone("done"))
+	fmt.Println("done")
 }
 
 func downloadImage(path string, page int, url string) {
@@ -133,17 +130,14 @@ func searchPages(provider, title string, chapter int) (count int, imagesURL []st
 }
 
 func downloadChapter(path, provider, title string, chapter int, displayProgressBar bool) {
-	cstep := color.FgYellow.Render
-	cprm := color.FgLightMagenta.Render
-	cdone := color.FgLightGreen.Render
 	if displayProgressBar {
-		fmt.Printf("%s to download ... ", cstep("search pages"))
+		fmt.Printf("search pages to download ... ")
 	}
 	count, imgURL := searchPages(provider, title, chapter)
 	if displayProgressBar {
-		fmt.Printf("%s (found %s pages for %s chapter %s)\n", cdone("done"), cprm(fmt.Sprintf("%d", count)), cprm(title), cprm(fmt.Sprintf("%d", chapter)))
+		fmt.Printf("done (found %d pages for %s chapter %d)\n", count, title, chapter)
 		// and then search for images to download
-		fmt.Printf("%s pages ...\n", cstep("download"))
+		fmt.Println("download pages ...")
 		bar := progressbar.NewOptions(count)
 		bar.RenderBlank()
 		var wg sync.WaitGroup
@@ -183,7 +177,7 @@ func Manga(provider, title string, chapter int, outputPath string, displayProgre
 	}
 	// check if the source is indeed a directory or not
 	if !src.IsDir() {
-		color.Error.Prompt("source path is not a directory")
+		fmt.Println("source path is not a directory")
 		os.Exit(1)
 	} else {
 		// it's a directory, then erase the content before

@@ -12,15 +12,11 @@ builds:
     main: gomangareaderdl.go
     binary: gomangareaderdl
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
     goos:
       - windows
-      - linux
-      - darwin
-      - freebsd
-      - netbsd
-      - openbsd
-      - solaris
+#      - linux
+#      - darwin
     goarch:
       - amd64
 
@@ -45,8 +41,8 @@ checksum:
   name_template: "{{ .ProjectName }}-{{ .Version }}-checksums.txt"
   algorithm: md5
 
-signs:
-  - artifacts: checksum
+#signs:
+#  - artifacts: checksum
 
 release:
   github:

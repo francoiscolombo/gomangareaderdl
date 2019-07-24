@@ -5,9 +5,7 @@ import (
 	"fmt"
 
 	"github.com/francoiscolombo/gomangareaderdl/commands"
-
 	"github.com/francoiscolombo/gomangareaderdl/settings"
-	"gopkg.in/gookit/color.v1"
 )
 
 const (
@@ -76,17 +74,10 @@ https://github.com/francoiscolombo/gomangareaderdl`)
 
 func main() {
 
-	green := color.FgGreen.Render
-	fmt.Printf("\n%s on ", green("Welcome"))
-	color.S256(15, 20).Print("goman")
-	color.S256(4, 231).Print("garea")
-	color.S256(15, 124).Print("derdl")
-	fmt.Printf("\n--------------------------\n\n")
+	fmt.Println("\nWelcome on gomangareaderdl")
+	fmt.Println("--------------------------\n")
 
-	fmt.Print("version ")
-	color.C256(69).Print(versionNumber)
-	fmt.Print(" ")
-	color.S256(124, 231).Printf("(%s)\n\n", versionName)
+	fmt.Printf("version %s (%s)\n", versionNumber, versionName)
 
 	if settings.IsSettingsExisting() == false {
 		settings.WriteDefaultSettings()
@@ -94,9 +85,8 @@ func main() {
 
 	settings := settings.ReadSettings()
 
-	cc := color.C256(40)
-	cc.Println("- Settings loaded.")
-	fmt.Printf("  > Default output path is %s\n  > Default provider is %s\n\n", cc.Sprint(settings.Config.OutputPath), cc.Sprint(settings.Config.Provider))
+	fmt.Println("- Settings loaded.")
+	fmt.Printf("  > Default output path is %s\n  > Default provider is %s\n\n", settings.Config.OutputPath, settings.Config.Provider)
 
 	var params parameters
 
@@ -130,8 +120,9 @@ func main() {
 		// fetch command allows the following parameters: manga, chapter and path
 		commands.ProcessViewCommand(&settings, params.Manga, params.Chapter, params.Path)
 	default:
-		color.Print("<red>Sorry my friend</>, but you didn't give me the good parameters, so I'm not able to help you!\n")
-		color.Print("<cyan>Maybe a little help can be what you really need?</> Okay, this should be usefull then...\n\n")
+		fmt.Println("Sorry my friend, but you didn't give me the good parameters, so I wont be able to help you!")
+		fmt.Println("Maybe a little help can be what you really need? Okay, this should be usefull then...")
+		fmt.Println()
 		usage()
 	}
 
