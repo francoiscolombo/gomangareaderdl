@@ -9,17 +9,16 @@ import (
 )
 
 const (
-	versionNumber = "0.4"
-	versionName   = "nebula storm"
-	commandFetch  = "fetch"
-	commandList   = "list"
-	commandConfig = "config"
-	commandUpdate = "update"
-	commandView   = "view"
+	versionNumber = "0.5"
+	versionName   = "Hōō Genma Ken"
 )
 
 type parameters struct {
-	Command  string
+	Fetch    bool
+	List     bool
+	Config   bool
+	Update   bool
+	View     bool
 	Manga    string
 	Chapter  int
 	Provider string
@@ -34,37 +33,37 @@ func usage() {
 	fmt.Println(`gomangareaderdl: CLI for manga mass download
 
 Usage
- $ gomangareaderdl -command fetch -manga <manga>
+ $ gomangareaderdl -<command> -manga <manga>
 
 Commands list
- fetch     Fetch manga to download
- config    Set defaults
- update    Update subscribed manga
- list      List downloaded manga
- view      Launch a graphical viewer, allowing you to watch a previously downloaded manga
+ -fetch     Fetch manga to download
+ -config    Set defaults
+ -update    Update subscribed manga
+ -list      List downloaded manga
+ -view      Launch a graphical viewer, allowing you to watch a previously downloaded manga
 
 Options, Sub-commands
- fetch
+ -fetch
   -manga       Set manga to download
   -chapter     Set start chapter to download
   -provider    Set download site (if not set, the default provider is used)
   -path        If used, allow to download manga to another path instead of the default one
   -force       Overwrite history
   -silent      Don't display download progress bar
- config
+ -config
   -output      Set default output path
   -provider    Set default provider
- update
+ -update
   -manga       Set manga to update (must have been loaded once before)
   -provider    Override download site
   -next        Set next chapter to download (rewrite history)
- view
+ -view
   -manga       Set manga to view
   -chapter     Set chapter to read
   -path        If used, allow to read manga from another path instead of the default one
 
 Example
- $ gomangareaderdl -command fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
+ $ gomangareaderdl -fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
  => Download shingeki-no-kyojin chapter 100 and forward into cwd
 
 For the full documentation please refer to:
@@ -90,7 +89,12 @@ func main() {
 
 	var params parameters
 
-	flag.StringVar(&params.Command, "command", "???", "command to execute")
+	flag.BoolVar(&params.Fetch, "fetch", false, "execute command fetch")
+	flag.BoolVar(&params.Config, "config", false, "execute command config")
+	flag.BoolVar(&params.Update, "update", false, "execute command update")
+	flag.BoolVar(&params.List, "list", false, "execute command list")
+	flag.BoolVar(&params.View, "view", false, "execute command view")
+
 	flag.StringVar(&params.Manga, "manga", "???", "manga to download or update")
 	flag.IntVar(&params.Chapter, "chapter", -1, "chapter to download")
 	flag.IntVar(&params.Next, "next", -1, "overwrite next chapter to download")
@@ -103,23 +107,22 @@ func main() {
 	flag.Parse()
 
 	// depending the command, right?
-	switch params.Command {
-	case commandList:
-		// list command
-		commands.ProcessListCommand(&settings)
-	case commandConfig:
-		// config command allows the following parameters: output and provider
-		commands.ProcessConfigCommand(&settings, params.Output, params.Provider)
-	case commandFetch:
+	if params.Fetch {
 		// fetch command allows the following parameters: manga, chapter, provider, path, force and silent
 		commands.ProcessFetchCommand(&settings, params.Manga, params.Chapter, params.Provider, params.Path, params.Force, params.Silent)
-	case commandUpdate:
+	} else if params.Config {
+		// config command allows the following parameters: output and provider
+		commands.ProcessConfigCommand(&settings, params.Output, params.Provider)
+	} else if params.Update {
 		// update command allows the following parameters: manga, provider and next
 		commands.ProcessUpdateCommand(&settings, params.Manga, params.Provider, params.Next)
-	case commandView:
+	} else if params.List {
+		// list command
+		commands.ProcessListCommand(&settings)
+	} else if params.View {
 		// fetch command allows the following parameters: manga, chapter and path
 		commands.ProcessViewCommand(&settings, params.Manga, params.Chapter, params.Path)
-	default:
+	} else {
 		fmt.Println("Sorry my friend, but you didn't give me the good parameters, so I wont be able to help you!")
 		fmt.Println("Maybe a little help can be what you really need? Okay, this should be usefull then...")
 		fmt.Println()
