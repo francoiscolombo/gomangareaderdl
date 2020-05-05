@@ -2,6 +2,8 @@ package fetch
 
 import (
 	"fmt"
+	"github.com/francoiscolombo/gomangareaderdl/createcbz"
+	"github.com/schollz/progressbar/v2"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,13 +15,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/francoiscolombo/gomangareaderdl/createcbz"
-
 	"github.com/PuerkitoBio/goquery"
-	"github.com/schollz/progressbar/v2"
 )
 
-func createCBZ(outputPath, pagesPath, title string, chapter int) {
+/*
+CreateCBZ create a readable comics archive from the pages downloaded and clean the temporary directory
+ */
+func CreateCBZ(outputPath, pagesPath, title string, chapter int) {
 	// List of Files to Zip
 	fmt.Printf("\ncreate %s ... ", fmt.Sprintf("%s-%03d.cbz", title, chapter))
 	var files []string
@@ -48,7 +50,10 @@ func createCBZ(outputPath, pagesPath, title string, chapter int) {
 	fmt.Println("done")
 }
 
-func downloadImage(path string, page int, url string) {
+/*
+DownloadImage simply download an image and store it in the proper directory
+ */
+func DownloadImage(path string, page int, url string) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("cache-control", "no-cache")
 	res, err := http.DefaultClient.Do(req)
@@ -73,7 +78,10 @@ func downloadImage(path string, page int, url string) {
 	}
 }
 
-func searchImage(provider, title, url string) (imageURL string) {
+/*
+SearchImage search in HTML page all the link that respect the pattern expected for downloading a comic page
+ */
+func SearchImage(provider, title, url string) (imageURL string) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("cache-control", "no-cache")
 	res, err := http.DefaultClient.Do(req)
@@ -101,7 +109,10 @@ func searchImage(provider, title, url string) (imageURL string) {
 	return
 }
 
-func searchPages(provider, title string, chapter int) (count int, imagesURL []string) {
+/*
+SearchPages will send the number of page to download, and a list of url for every image to download
+ */
+func SearchPages(provider, title string, chapter int) (count int, imagesURL []string) {
 	url := fmt.Sprintf("https://www.%s/%s/%d/%d", provider, title, chapter, 1)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("cache-control", "no-cache")
@@ -133,7 +144,7 @@ func downloadChapter(path, provider, title string, chapter int, displayProgressB
 	if displayProgressBar {
 		fmt.Printf("search pages to download ... ")
 	}
-	count, imgURL := searchPages(provider, title, chapter)
+	count, imgURL := SearchPages(provider, title, chapter)
 	if displayProgressBar {
 		fmt.Printf("done (found %d pages for %s chapter %d)\n", count, title, chapter)
 		// and then search for images to download
@@ -144,7 +155,7 @@ func downloadChapter(path, provider, title string, chapter int, displayProgressB
 		wg.Add(len(imgURL))
 		for p, img := range imgURL {
 			go func(page int, urlImg string) {
-				downloadImage(path, page, searchImage(provider, title, urlImg))
+				DownloadImage(path, page, SearchImage(provider, title, urlImg))
 				bar.Add(1)
 				wg.Done()
 			}(p, img)
@@ -152,7 +163,7 @@ func downloadChapter(path, provider, title string, chapter int, displayProgressB
 		wg.Wait()
 	} else {
 		for p, img := range imgURL {
-			downloadImage(path, p, searchImage(provider, title, img))
+			DownloadImage(path, p, SearchImage(provider, title, img))
 		}
 
 	}
@@ -187,7 +198,7 @@ func Manga(provider, title string, chapter int, outputPath string, displayProgre
 		}
 	}
 	downloadChapter(downloadPath, provider, title, chapter, displayProgressBar)
-	createCBZ(cbzPath, downloadPath, title, chapter)
+	CreateCBZ(cbzPath, downloadPath, title, chapter)
 	nextChapter = chapter + 1
 	return
 }
@@ -196,6 +207,6 @@ func Manga(provider, title string, chapter int, outputPath string, displayProgre
 NextChapter check if a new chapter exists, return true if exists and false otherwise
 */
 func NextChapter(provider, title string, chapter int) bool {
-	count, _ := searchPages(provider, title, chapter)
+	count, _ := SearchPages(provider, title, chapter)
 	return (count > 0)
 }

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/francoiscolombo/gomangareaderdl/downloader"
 	"os"
 
 	"github.com/francoiscolombo/gomangareaderdl/fetch"
@@ -127,5 +128,15 @@ func ProcessViewCommand(cfg *settings.Settings, manga string, chapter int, path 
 	err := viewer.Read(manga, chapter, path)
 	if err != nil {
 		fmt.Printf("Error when trying to open manga %s chapter %d for reading: %s", manga, chapter, err)
+	}
+}
+
+/*
+ProcessDownloadCommand launch the GUI for downloading mangas
+ */
+func ProcessDownloadCommand(cfg *settings.Settings) {
+	err := downloader.Download(cfg)
+	if err != nil {
+		fmt.Printf("Error when trying to launch download GUI: %s", err)
 	}
 }

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	versionNumber = "0.5"
-	versionName   = "Hōō Genma Ken"
+	versionNumber = "0.6"
+	versionName   = "Hō Yoku Tenshō"
 )
 
 type parameters struct {
@@ -19,6 +19,7 @@ type parameters struct {
 	Config   bool
 	Update   bool
 	View     bool
+	GUI      bool
 	Manga    string
 	Chapter  int
 	Provider string
@@ -41,6 +42,7 @@ Commands list
  -update    Update subscribed manga
  -list      List downloaded manga
  -view      Launch a graphical viewer, allowing you to watch a previously downloaded manga
+ -gui       Launch a GUI to downloaded manga instead of the using the CLI
 
 Options, Sub-commands
  -fetch
@@ -94,6 +96,7 @@ func main() {
 	flag.BoolVar(&params.Update, "update", false, "execute command update")
 	flag.BoolVar(&params.List, "list", false, "execute command list")
 	flag.BoolVar(&params.View, "view", false, "execute command view")
+	flag.BoolVar(&params.GUI, "gui", false, "launch GUI for downloading mangas")
 
 	flag.StringVar(&params.Manga, "manga", "???", "manga to download or update")
 	flag.IntVar(&params.Chapter, "chapter", -1, "chapter to download")
@@ -122,6 +125,9 @@ func main() {
 	} else if params.View {
 		// fetch command allows the following parameters: manga, chapter and path
 		commands.ProcessViewCommand(&settings, params.Manga, params.Chapter, params.Path)
+	} else if params.GUI {
+		// gui command simply launch the graphic download interface
+		commands.ProcessDownloadCommand(&settings)
 	} else {
 		fmt.Println("Sorry my friend, but you didn't give me the good parameters, so I wont be able to help you!")
 		fmt.Println("Maybe a little help can be what you really need? Okay, this should be usefull then...")
