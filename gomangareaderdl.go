@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	versionNumber = "0.6"
-	versionName   = "Hō Yoku Tenshō"
+	versionNumber = "0.7"
+	versionName   = "Lightning Plasma"
 )
 
 type parameters struct {

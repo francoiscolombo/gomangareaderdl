@@ -11,7 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 
@@ -98,13 +97,17 @@ func SearchImage(provider, title, url string) (imageURL string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r, _ := regexp.Compile(fmt.Sprintf("^http.*://.+\\.%s/%s/\\d+/.+\\..+$", provider, title))
+	//r, _ := regexp.Compile(fmt.Sprintf("^http.*://.+\\.%s/%s/\\d+/.+\\..+$", provider, title))
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		v, _ := s.Attr("src")
-		if r.MatchString(v) {
-			imageURL = v
-			return
-		}
+		imageURL = v
+		return
+	//	v, _ := s.Attr("src")
+	//	if r.MatchString(v) {
+	//		log.Println("matches")
+	//		imageURL = v
+	//		return
+	//	}
 	})
 	return
 }
