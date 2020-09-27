@@ -2,12 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"github.com/francoiscolombo/gomangareaderdl/downloader"
 	"os"
 
 	"github.com/francoiscolombo/gomangareaderdl/fetch"
 	"github.com/francoiscolombo/gomangareaderdl/settings"
-	"github.com/francoiscolombo/gomangareaderdl/viewer"
 )
 
 /*
@@ -105,38 +103,4 @@ func ProcessUpdateCommand(cfg *settings.Settings, manga, provider string, nextCh
 		fmt.Printf("  > Set next chapter to download to %d\n", nextChapter)
 	}
 	*cfg = settings.UpdateHistory(*cfg, manga, nextChapter, provider)
-}
-
-/*
-ProcessViewCommand allows to view a previously downloaded manga given chapter
-*/
-func ProcessViewCommand(cfg *settings.Settings, manga string, chapter int, path string) {
-	if manga == "???" {
-		fmt.Println("parameter --manga is mandatory...")
-		os.Exit(1)
-	}
-	if chapter < 0 {
-		chapter = settings.SearchLastChapter((*cfg), manga)
-	}
-	if path == "???" {
-		path = cfg.Config.OutputPath
-	}
-	fmt.Println("- <View> command selected, with the following parameters:")
-	fmt.Printf("  > Manga title to view : '%s'\n", manga)
-	fmt.Printf("  > Read chapter %d\n", chapter)
-	fmt.Printf("  > From path '%s'\n", path)
-	err := viewer.Read(manga, chapter, path)
-	if err != nil {
-		fmt.Printf("Error when trying to open manga %s chapter %d for reading: %s", manga, chapter, err)
-	}
-}
-
-/*
-ProcessDownloadCommand launch the GUI for downloading mangas
- */
-func ProcessDownloadCommand(cfg *settings.Settings) {
-	err := downloader.Download(cfg)
-	if err != nil {
-		fmt.Printf("Error when trying to launch download GUI: %s", err)
-	}
 }

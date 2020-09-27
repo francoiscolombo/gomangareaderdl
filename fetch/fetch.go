@@ -100,7 +100,11 @@ func SearchImage(provider, title, url string) (imageURL string) {
 	//r, _ := regexp.Compile(fmt.Sprintf("^http.*://.+\\.%s/%s/\\d+/.+\\..+$", provider, title))
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		v, _ := s.Attr("src")
-		imageURL = v
+		if strings.HasPrefix(v,"http") {
+			imageURL = v
+		} else {
+			imageURL = fmt.Sprintf("https:%s",v)
+		}
 		return
 	//	v, _ := s.Attr("src")
 	//	if r.MatchString(v) {

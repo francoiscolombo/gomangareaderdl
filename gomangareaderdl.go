@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	versionNumber = "0.7"
-	versionName   = "Lightning Plasma"
+	versionNumber = "0.8"
+	versionName   = "Lightning Telios"
 )
 
 type parameters struct {
@@ -18,8 +18,7 @@ type parameters struct {
 	List     bool
 	Config   bool
 	Update   bool
-	View     bool
-	GUI      bool
+	Help     bool
 	Manga    string
 	Chapter  int
 	Provider string
@@ -33,7 +32,7 @@ type parameters struct {
 func usage() {
 	fmt.Println(`gomangareaderdl: CLI for manga mass download
 
-Usage
+Usage for batch mode
  $ gomangareaderdl -<command> -manga <manga>
 
 Commands list
@@ -41,8 +40,6 @@ Commands list
  -config    Set defaults
  -update    Update subscribed manga
  -list      List downloaded manga
- -view      Launch a graphical viewer, allowing you to watch a previously downloaded manga
- -gui       Launch a GUI to downloaded manga instead of the using the CLI
 
 Options, Sub-commands
  -fetch
@@ -59,10 +56,6 @@ Options, Sub-commands
   -manga       Set manga to update (must have been loaded once before)
   -provider    Override download site
   -next        Set next chapter to download (rewrite history)
- -view
-  -manga       Set manga to view
-  -chapter     Set chapter to read
-  -path        If used, allow to read manga from another path instead of the default one
 
 Example
  $ gomangareaderdl -fetch -provider mangareader.net -manga shingeki-no-kyojin -chapter 100 -path .
@@ -95,8 +88,7 @@ func main() {
 	flag.BoolVar(&params.Config, "config", false, "execute command config")
 	flag.BoolVar(&params.Update, "update", false, "execute command update")
 	flag.BoolVar(&params.List, "list", false, "execute command list")
-	flag.BoolVar(&params.View, "view", false, "execute command view")
-	flag.BoolVar(&params.GUI, "gui", false, "launch GUI for downloading mangas")
+	flag.BoolVar(&params.Help, "help", false, "display help")
 
 	flag.StringVar(&params.Manga, "manga", "???", "manga to download or update")
 	flag.IntVar(&params.Chapter, "chapter", -1, "chapter to download")
@@ -122,16 +114,8 @@ func main() {
 	} else if params.List {
 		// list command
 		commands.ProcessListCommand(&settings)
-	} else if params.View {
-		// fetch command allows the following parameters: manga, chapter and path
-		commands.ProcessViewCommand(&settings, params.Manga, params.Chapter, params.Path)
-	} else if params.GUI {
-		// gui command simply launch the graphic download interface
-		commands.ProcessDownloadCommand(&settings)
 	} else {
-		fmt.Println("Sorry my friend, but you didn't give me the good parameters, so I wont be able to help you!")
-		fmt.Println("Maybe a little help can be what you really need? Okay, this should be usefull then...")
-		fmt.Println()
+		// display usage & quit
 		usage()
 	}
 

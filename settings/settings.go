@@ -41,7 +41,7 @@ func getSettingsPath() string {
 		fmt.Printf("Error when trying to get current user: %s\n", err)
 		os.Exit(1)
 	}
-	return user.HomeDir + "/.gomangareader.json"
+	return user.HomeDir + "/.gomangareaderdl.json"
 }
 
 /*
