@@ -1,3 +1,7 @@
+# OBSOLETE
+
+this is no more working, since it was supposed to work with sites that does not exists anymore. I only keep it as a sample for go CLI tools.
+
 # gomangareaderdl
 
 This is a simple cli tool to mass download mangas from several providers, manage history of downloaded chapters, checks if new chapters availables and continue downloads from the last chapter.
